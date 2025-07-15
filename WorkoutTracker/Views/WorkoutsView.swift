@@ -11,9 +11,19 @@ struct WorkoutsView: View {
     let workouts: [Workout]
     
     var body: some View {
-        List(workouts) { workout in
-            CardView(workout: workout)
+        NavigationStack {
+            List(workouts) { workout in
+                NavigationLink(destination: ExercisesView(workout: workout)) {
+                    CardView(workout: workout)
+                }
                 .listRowBackground(workout.theme.mainColor)
+            }
+            .navigationTitle("Workouts")
+            .toolbar {
+                Button(action: {}) {
+                    Image(systemName: "plus")
+                }
+            }
         }
     }
 }

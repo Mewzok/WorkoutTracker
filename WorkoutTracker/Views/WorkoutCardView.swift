@@ -1,5 +1,5 @@
 //
-//  CardView.swift
+//  WorkoutCardView.swift
 //  WorkoutTracker
 //
 //  Created by Student on 7/15/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CardView: View {
+struct WorkoutCardView: View {
     let workout: Workout
     
     var body: some View {
@@ -40,5 +40,5 @@ struct CardView: View {
 
 #Preview(traits: .fixedLayout(width: 400, height: 60)) {
     let workout = Workout.sampleData[0]
-    CardView(workout: workout)
+    WorkoutCardView(workout: workout)
 }
