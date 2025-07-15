@@ -63,6 +63,37 @@ struct ExerciseDetailView: View {
                     AddProgressEntryView(exercise: $exercise)
                 }
             }
+            
+            Section(header: Text("Progress History")) {
+                let grouped = Dictionary(grouping: exercise.progressHistory) { entry in
+                    let date = entry.date
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "MMMM yyyy"
+                    return formatter.string(from: date)
+                }
+                
+                let sortedKeys = grouped.keys.sorted {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "MMMM yyyy"
+                    return formatter.date(from: $0)! > formatter.date(from: $1)!
+                }
+                
+                ForEach(sortedKeys, id: \.self) { month in
+                    Section(header: Text("\(month)")
+                        .font(.title3)
+                        .bold()
+                        .padding(.vertical, 8)) {
+                        ForEach(grouped[month]!.sorted(by: { $0.date > $1.date })) { entry in
+                            HStack {
+                                Text(entry.date.formatted(date: .abbreviated, time: .omitted))
+                                Spacer()
+                                Text("\(entry.weight, specifier: "%.1f") lbs x \(entry.reps) reps")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
