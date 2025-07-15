@@ -12,9 +12,9 @@ struct Workout: Identifiable {
     let id: UUID
     var name: String
     var theme: Theme
-    var exercises: [String]
+    var exercises: [Exercise]
     
-    init(id: UUID = UUID(), name: String, theme: Theme, exercises: [String]) {
+    init(id: UUID = UUID(), name: String, theme: Theme, exercises: [Exercise]) {
         self.id = id
         self.name = name
         self.theme = theme

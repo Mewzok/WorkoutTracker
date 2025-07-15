@@ -14,7 +14,7 @@ struct WorkoutsView: View {
         NavigationStack {
             List(workouts) { workout in
                 NavigationLink(destination: ExercisesView(workout: workout)) {
-                    CardView(workout: workout)
+                    WorkoutCardView(workout: workout)
                 }
                 .listRowBackground(workout.theme.mainColor)
             }

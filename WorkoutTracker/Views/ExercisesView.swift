@@ -11,16 +11,22 @@ struct ExercisesView: View {
     let workout: Workout
     
     var body: some View {
-        List {
-            Section(header: Text("Workout Info")) {
-                
+        List(workout.exercises) { exercise in
+            NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                ExerciseCardView(exercise: exercise)
+            }
+            .listRowBackground(exercise.theme.mainColor)
+        }
+        .navigationTitle("Exercises")
+        .toolbar {
+            Button(action: {}) {
+                Image(systemName: "plus")
             }
         }
     }
 }
 
+
 #Preview {
-    NavigationStack {
-        ExercisesView(workout: Workout.sampleData[0])
-    }
+    ExercisesView(workout: Workout.sampleData[0])
 }
