@@ -18,13 +18,28 @@ struct AddProgressEntryView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Update Progress")) {
-                    TextField("Weight", value: $weight, format: .number)
+                HStack {
+                    Text("Weight")
+                    Spacer()
+                    TextField(String(exercise.currentWeight), value: $weight, format: .number)
                         .keyboardType(.decimalPad)
-                    TextField("Reps", value: $reps, format: .number)
-                        .keyboardType(.numberPad)
-                    DatePicker("Date", selection: $date, displayedComponents: .date)
+                        .multilineTextAlignment(.trailing)
+                    Text("lbs")
                 }
+                HStack {
+                    Text("Reps")
+                    Spacer()
+                    TextField(String(exercise.currentReps), value: $reps, format: .number)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                    Text("reps")
+                }
+                
+                DatePicker("Date", selection: $date, displayedComponents: .date)
+            }
+            .onAppear {
+                weight = exercise.currentWeight
+                reps = exercise.currentReps
             }
             .navigationTitle("Update Progress")
             .toolbar {
