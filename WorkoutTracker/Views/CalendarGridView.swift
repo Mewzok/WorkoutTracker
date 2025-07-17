@@ -8,30 +8,62 @@
 import SwiftUI
 
 struct CalendarGridView: View {
+    @State private var currentMonthOffset = 0
     let weeks: [[CalendarDay]]
     
     var body: some View {
-        VStack(spacing: 4) {
-            // weekday headers
+        VStack {
             HStack {
-                ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
-                        Text(day)
-                        .font(.caption)
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(.secondary)
+                Button(action: { currentMonthOffset -= 1 }) {
+                    Image(systemName: "chevron.left")
+                }
+                Spacer()
+                
+                Text(formattedMonthTitle(currentMonthOffset: currentMonthOffset))
+                    .font(.headline)
+                
+                Spacer()
+                
+                Button(action: { currentMonthOffset += 1 }) {
+                    Image(systemName: "chevron.right")
                 }
             }
+            .padding()
             
-            // calendar grid
-            ForEach(weeks.indices, id: \.self) { weekIndex in
-                HStack(spacing: 4) {
-                    ForEach(weeks[weekIndex]) { day in
-                        DayCellView(day: day)
+            let targetDate = Calendar.current.date(byAdding: .month, value: currentMonthOffset, to: Date())!
+            let month = CalendarMonth(monthDate: targetDate)
+            let weeks = month.generateWeeks()
+            
+            VStack(spacing: 4) {
+                // weekday headers
+                HStack {
+                    ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
+                        Text(day)
+                            .font(.caption)
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                // calendar grid
+                ForEach(weeks.indices, id: \.self) { weekIndex in
+                    HStack(spacing: 4) {
+                        ForEach(weeks[weekIndex]) { day in
+                            DayCellView(day: day)
+                        }
                     }
                 }
             }
         }
     }
+}
+
+func formattedMonthTitle(currentMonthOffset: Int) -> String {
+    let calendar = Calendar.current
+    let date = calendar.date(byAdding: .month, value: currentMonthOffset, to: Date())
+    let formatter = DateFormatter()
+    formatter.dateFormat = "MMMM yyyy"
+    return formatter.string(from: date!)
 }
 
 struct DayCellView: View {
