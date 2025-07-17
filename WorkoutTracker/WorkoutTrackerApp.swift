@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct WorkoutTrackerApp: App {
-    @StateObject var storage = LogStorage()
+    @StateObject private var logStorage = LogStorage()
     
     var body: some Scene {
         WindowGroup {

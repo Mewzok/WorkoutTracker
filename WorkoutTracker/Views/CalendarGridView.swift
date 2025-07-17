@@ -10,6 +10,7 @@ import SwiftUI
 struct CalendarGridView: View {
     @State private var currentMonthOffset = 0
     @State private var selectedDate: Date? = nil
+    @EnvironmentObject var logStorage: LogStorage
     let weeks: [[CalendarDay]]
     
     var body: some View {
@@ -57,7 +58,8 @@ struct CalendarGridView: View {
             }
         }
         .sheet(item: $selectedDate) { date in
-            DayLogView(date: date)
+            DayLogView(date: date, selectedDate: $selectedDate)
+                .environmentObject(logStorage)
         }
     }
 }
