@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CalendarGridView: View {
     @State private var currentMonthOffset = 0
+    @State private var selectedDate: Date? = nil
     let weeks: [[CalendarDay]]
     
     var body: some View {
@@ -49,11 +50,14 @@ struct CalendarGridView: View {
                 ForEach(weeks.indices, id: \.self) { weekIndex in
                     HStack(spacing: 4) {
                         ForEach(weeks[weekIndex]) { day in
-                            DayCellView(day: day)
+                            DayCellView(day: day, selectedDate: $selectedDate)
                         }
                     }
                 }
             }
+        }
+        .sheet(item: $selectedDate) { date in
+            DayLogView(date: date)
         }
     }
 }
@@ -68,6 +72,7 @@ func formattedMonthTitle(currentMonthOffset: Int) -> String {
 
 struct DayCellView: View {
     let day: CalendarDay
+    @Binding var selectedDate: Date?
     
     var body: some View {
         VStack {
@@ -85,11 +90,16 @@ struct DayCellView: View {
         .padding(4)
         .background(RoundedRectangle(cornerRadius: 6)
             .fill(Color(.systemBackground))
+            .onTapGesture {
+                selectedDate = day.date
+            }
         )
     }
 }
 
-private extension Date {
+extension Date: @retroactive Identifiable {
+    public var id: Date { self }
+    
     var dayNumber: String {
         let day = Calendar.current.component(.day, from: self)
         return "\(day)"
