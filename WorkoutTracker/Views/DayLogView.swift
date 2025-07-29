@@ -6,15 +6,18 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DayLogView: View {
     let date: Date
-    @Binding var selectedDate: Date?
     @State private var noteText: String = ""
-    @EnvironmentObject var logStorage: LogStorage
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) var modelContext
+    @Query var allLogs: [DailyLog]
+    @State private var todayLog: DailyLog?
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(alignment: .leading) {
                 Text("Log for \(formatted(date))")
                     .font(.title2)
@@ -30,18 +33,27 @@ struct DayLogView: View {
                     Spacer()
                     
                     Button("Cancel") {
-                        if let date = selectedDate {
-                            noteText = logStorage.getLog(for: date)?.note ?? ""
-                        }
+                        dismiss()
                     }
                     .foregroundColor(.red)
                     
                     Spacer()
                     
                     Button("Save") {
-                        if let date = selectedDate {
-                            logStorage.updateLog(for: date, with: noteText)
+                        if let existing = todayLog {
+                            existing.note = noteText
+                        } else {
+                            let newLog = DailyLog(date: date, note: noteText)
+                            modelContext.insert(newLog)
                         }
+                        
+                        do {
+                            try modelContext.save()
+                        } catch {
+                            print("Error saving log: \(error)")
+                        }
+                        
+                        dismiss()
                     }
                     .foregroundColor(.blue)
                     
@@ -54,7 +66,10 @@ struct DayLogView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
-            noteText = logStorage.getLog(for: date)?.note ?? ""
+            if let existing = allLogs.first(where: { Calendar.current.isDate($0.date, inSameDayAs: date) }) {
+                todayLog = existing
+                noteText = existing.note
+            }
         }
     }
     
@@ -72,11 +87,7 @@ struct DayLogView: View {
 struct PreviewWrapper: View {
     @State private var selectedDate: Date? = Date()
     
-    var body: some View {
-        DayLogView(
-    date: selectedDate ?? Date(),
-        selectedDate: $selectedDate
-    )
-        .environmentObject(LogStorage())
+    var body: some View {        
+        DayLogView(date: Date())
     }
 }

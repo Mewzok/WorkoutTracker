@@ -11,7 +11,6 @@ struct CalendarGridView: View {
     @State private var currentMonthOffset = 0
     @State private var selectedDate: Date? = nil
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var logStorage: LogStorage
     
     var body: some View {
         NavigationStack {
@@ -68,8 +67,7 @@ struct CalendarGridView: View {
                 }
             }
             .sheet(item: $selectedDate) { date in
-                DayLogView(date: date, selectedDate: $selectedDate)
-                    .environmentObject(logStorage)
+                DayLogView(date: date)
             }
         }
     }

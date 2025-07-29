@@ -11,7 +11,6 @@ struct ExerciseDetailView: View {
     @State var exercise: Exercise
     @State private var showingAddProgressSheet = false
     @State private var showingCalendar = false
-    @EnvironmentObject var logStorage: LogStorage
     
     var body: some View {
         List {
@@ -75,7 +74,6 @@ struct ExerciseDetailView: View {
                 .padding(.vertical, 4)
                 .sheet(isPresented: $showingCalendar) {
                     CalendarGridView()
-                        .environmentObject(logStorage)
                 }
                 let grouped = Dictionary(grouping: exercise.progressHistory) { entry in
                     let date = entry.date
@@ -113,6 +111,5 @@ struct ExerciseDetailView: View {
 #Preview {
     NavigationStack {
         ExerciseDetailView(exercise: Exercise.sampleData[0])
-            .environmentObject(LogStorage())
     }
 }

@@ -6,9 +6,17 @@
 //
 
 import Foundation
+import SwiftData
 
-struct DailyLog: Codable, Identifiable {
+@Model
+class DailyLog: Identifiable {
     var id: UUID = UUID()
-    let date: Date
+    var date: Date
     var note: String
+    
+    init(id: UUID = UUID(), date: Date, note: String) {
+        self.id = id
+        self.date = date
+        self.note = note
+    }
 }

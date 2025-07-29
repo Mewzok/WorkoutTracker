@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct WorkoutTrackerApp: App {
-    @StateObject private var logStorage = LogStorage()
     
     var body: some Scene {
         WindowGroup {
             WorkoutsView(workouts: Workout.sampleData)
         }
+        .modelContainer(for: DailyLog.self)
     }
 }
