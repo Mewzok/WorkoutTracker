@@ -10,56 +10,67 @@ import SwiftUI
 struct CalendarGridView: View {
     @State private var currentMonthOffset = 0
     @State private var selectedDate: Date? = nil
+    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var logStorage: LogStorage
-    let weeks: [[CalendarDay]]
     
     var body: some View {
-        VStack {
-            HStack {
-                Button(action: { currentMonthOffset -= 1 }) {
-                    Image(systemName: "chevron.left")
-                }
-                Spacer()
-                
-                Text(formattedMonthTitle(currentMonthOffset: currentMonthOffset))
-                    .font(.headline)
-                
-                Spacer()
-                
-                Button(action: { currentMonthOffset += 1 }) {
-                    Image(systemName: "chevron.right")
-                }
-            }
-            .padding()
-            
-            let targetDate = Calendar.current.date(byAdding: .month, value: currentMonthOffset, to: Date())!
-            let month = CalendarMonth(monthDate: targetDate)
-            let weeks = month.generateWeeks()
-            
-            VStack(spacing: 4) {
-                // weekday headers
+        NavigationStack {
+            VStack {
                 HStack {
-                    ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
-                        Text(day)
-                            .font(.caption)
-                            .frame(maxWidth: .infinity)
-                            .foregroundColor(.secondary)
+                    Button(action: { currentMonthOffset -= 1 }) {
+                        Image(systemName: "chevron.left")
+                    }
+                    Spacer()
+                    
+                    Text(formattedMonthTitle(currentMonthOffset: currentMonthOffset))
+                        .font(.headline)
+                    
+                    Spacer()
+                    
+                    Button(action: { currentMonthOffset += 1 }) {
+                        Image(systemName: "chevron.right")
                     }
                 }
+                .padding()
                 
-                // calendar grid
-                ForEach(weeks.indices, id: \.self) { weekIndex in
-                    HStack(spacing: 4) {
-                        ForEach(weeks[weekIndex]) { day in
-                            DayCellView(day: day, selectedDate: $selectedDate)
+                let targetDate = Calendar.current.date(byAdding: .month, value: currentMonthOffset, to: Date())!
+                let month = CalendarMonth(monthDate: targetDate)
+                let weeks = month.generateWeeks()
+                
+                VStack(spacing: 4) {
+                    // weekday headers
+                    HStack {
+                        ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
+                            Text(day)
+                                .font(.caption)
+                                .frame(maxWidth: .infinity)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    // calendar grid
+                    ForEach(weeks.indices, id: \.self) { weekIndex in
+                        HStack(spacing: 4) {
+                            ForEach(weeks[weekIndex]) { day in
+                                DayCellView(day: day, selectedDate: $selectedDate)
+                            }
                         }
                     }
                 }
             }
-        }
-        .sheet(item: $selectedDate) { date in
-            DayLogView(date: date, selectedDate: $selectedDate)
-                .environmentObject(logStorage)
+            .navigationTitle("Calendar")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+            }
+            .sheet(item: $selectedDate) { date in
+                DayLogView(date: date, selectedDate: $selectedDate)
+                    .environmentObject(logStorage)
+            }
         }
     }
 }
@@ -111,8 +122,7 @@ extension Date: @retroactive Identifiable {
 #Preview {
     let today = Date()
     let testMonth = CalendarMonth(monthDate: today)
-    let weeks = testMonth.generateWeeks()
     
-    CalendarGridView(weeks: weeks)
+    CalendarGridView()
         .padding()
 }

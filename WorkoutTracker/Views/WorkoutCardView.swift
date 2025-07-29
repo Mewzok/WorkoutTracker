@@ -23,8 +23,8 @@ struct WorkoutCardView: View {
                     .font(.caption)
                     .padding(8)
                     .background(Circle().fill(workout.theme.accentColor.opacity(0.2)))
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
+                //Image(systemName: "chevron.right")
+                  //  .foregroundColor(.gray)
             }
             
                 

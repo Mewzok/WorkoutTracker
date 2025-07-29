@@ -22,9 +22,6 @@ struct ExerciseCardView: View {
                 
             }
             Spacer()
-            
-            Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 12)
@@ -34,7 +31,7 @@ struct ExerciseCardView: View {
     }
 }
 
-#Preview(traits: .fixedLayout(width: 400, height: 60)) {
+#Preview() {
     let exercise = Exercise.sampleData[0]
     ExerciseCardView(exercise: exercise)
 

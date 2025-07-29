@@ -10,6 +10,8 @@ import SwiftUI
 struct ExerciseDetailView: View {
     @State var exercise: Exercise
     @State private var showingAddProgressSheet = false
+    @State private var showingCalendar = false
+    @EnvironmentObject var logStorage: LogStorage
     
     var body: some View {
         List {
@@ -65,6 +67,16 @@ struct ExerciseDetailView: View {
             }
             
             Section(header: Text("Progress History")) {
+                Button() {
+                    showingCalendar = true
+                } label: {
+                    Label("Show Calendar", systemImage: "calendar")
+                }
+                .padding(.vertical, 4)
+                .sheet(isPresented: $showingCalendar) {
+                    CalendarGridView()
+                        .environmentObject(logStorage)
+                }
                 let grouped = Dictionary(grouping: exercise.progressHistory) { entry in
                     let date = entry.date
                     let formatter = DateFormatter()
@@ -101,5 +113,6 @@ struct ExerciseDetailView: View {
 #Preview {
     NavigationStack {
         ExerciseDetailView(exercise: Exercise.sampleData[0])
+            .environmentObject(LogStorage())
     }
 }
