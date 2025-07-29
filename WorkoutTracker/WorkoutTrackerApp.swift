@@ -13,8 +13,23 @@ struct WorkoutTrackerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            WorkoutsView(workouts: Workout.sampleData)
+            TabView {
+                WorkoutsView(workouts: Workout.sampleData)
+                    .tabItem {
+                        Label("Workouts", systemImage: "dumbbell")
+                    }
+                
+                ExerciseListView()
+                    .tabItem {
+                        Label("Exercises", systemImage: "figure.walk")
+                    }
+                
+                SettingsView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
+            }
         }
-        .modelContainer(for: DailyLog.self)
+        .modelContainer(for: [DailyLog.self, Exercise.self, ProgressEntry.self])
     }
 }

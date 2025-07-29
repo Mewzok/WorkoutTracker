@@ -10,7 +10,7 @@ import ThemeKit
 
 extension Exercise {
     static func stub(named name: String) -> Exercise {
-        Exercise(name: name, sets: 3, minReps: 10, maxReps: 12, warmupSets: 0, progressHistory: [ ProgressEntry(date: Date(), weight: 100.0, reps: 10)], theme: .poppy)
+        Exercise(name: name, sets: 3, minReps: 10, maxReps: 12, warmupSets: 0, progressHistory: [ ProgressEntry(date: Date(), weight: 100.0, reps: 10)])
     }
     
     static let sampleData: [Exercise] = [

@@ -35,15 +35,6 @@ struct ExerciseDetailView: View {
                     Spacer()
                     Text(String(exercise.warmupSets))
                 }
-                HStack {
-                    Label("Theme", systemImage: "paintpalette")
-                    Spacer()
-                    Text(exercise.theme.name)
-                        .padding(4)
-                        .foregroundColor(exercise.theme.accentColor)
-                        .background(exercise.theme.mainColor)
-                        .cornerRadius(4)
-                }
             }
             
             Section(header: Text("Your Stats")) {

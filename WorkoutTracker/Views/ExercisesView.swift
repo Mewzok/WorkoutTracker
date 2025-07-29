@@ -15,7 +15,6 @@ struct ExercisesView: View {
             NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                 ExerciseCardView(exercise: exercise)
             }
-            .listRowBackground(exercise.theme.mainColor)
         }
         .navigationTitle("Exercises")
         .toolbar {

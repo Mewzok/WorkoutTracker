@@ -6,10 +6,17 @@
 //
 
 import Foundation
+import SwiftData
 
-struct ProgressEntry: Identifiable {
-    let id = UUID()
-    let date: Date
-    let weight: Double
-    let reps: Int
+@Model
+class ProgressEntry: Identifiable {
+    var date: Date
+    var weight: Double
+    var reps: Int
+    
+    init(date: Date, weight: Double, reps: Int) {
+        self.date = date
+        self.weight = weight
+        self.reps = reps
+    }
 }

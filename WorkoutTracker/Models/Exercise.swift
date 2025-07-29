@@ -6,17 +6,18 @@
 //
 
 import Foundation
-import ThemeKit
+import SwiftData
 
-struct Exercise: Identifiable {
-    let id: UUID
+@Model
+class Exercise: Identifiable {
     var name: String
     var sets: Int
     var minReps: Int
     var maxReps: Int
     var warmupSets: Int
-    var progressHistory: [ProgressEntry]
-    var theme: Theme
+    
+    @Relationship(deleteRule: .cascade)
+    var progressHistory: [ProgressEntry] = []
     
     var currentWeight: Double {
         progressHistory.last?.weight ?? 0
@@ -30,14 +31,12 @@ struct Exercise: Identifiable {
         progressHistory.last?.date
     }
     
-    init(id: UUID = UUID(), name: String, sets: Int, minReps: Int, maxReps: Int, warmupSets: Int, progressHistory: [ProgressEntry], theme: Theme) {
-        self.id = id
+    init(name: String, sets: Int, minReps: Int, maxReps: Int, warmupSets: Int, progressHistory: [ProgressEntry]) {
         self.name = name
         self.sets = sets
         self.minReps = minReps
         self.maxReps = maxReps
         self.warmupSets = warmupSets
         self.progressHistory = progressHistory
-        self.theme = theme
     }
 }
