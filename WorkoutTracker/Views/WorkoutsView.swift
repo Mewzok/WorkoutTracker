@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct WorkoutsView: View {
+    @State private var newWorkout: Workout? = nil
+    
     @Environment(\.modelContext) private var context
     @Query private var workouts: [Workout]
     
@@ -32,7 +34,7 @@ struct WorkoutsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(workouts) { workout in
-                    NavigationLink(destination: AddWorkoutView()) {
+                    NavigationLink(destination: AddWorkoutView(workout: workout)) {
                         WorkoutCardView(workout: workout)
                     }
                     .listRowBackground(workout.theme.mainColor)
@@ -50,7 +52,7 @@ struct WorkoutsView: View {
             }
         }
         .sheet(isPresented: $isPresentingAddWorkout) {
-            AddWorkoutView()
+            AddWorkoutView(workout: Workout(name: "", theme: .sky, exercises: [], day: nil))
         }
     }
 }
