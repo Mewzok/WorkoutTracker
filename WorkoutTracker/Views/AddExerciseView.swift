@@ -81,7 +81,7 @@ struct AddExerciseView: View {
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.leading)
                         .onChange(of: currentWeight) {
-                            currentWeight = currentWeight.filter { "0123456789".contains($0) }
+                            currentWeight = currentWeight.filter { ".0123456789".contains($0) }
                         }
                     Text("lbs")
                         .frame(alignment: .leading)
