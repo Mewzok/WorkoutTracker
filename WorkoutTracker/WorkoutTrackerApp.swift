@@ -14,7 +14,7 @@ struct WorkoutTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                WorkoutsView(workouts: Workout.sampleData)
+                WorkoutsView()
                     .tabItem {
                         Label("Workouts", systemImage: "dumbbell")
                     }
