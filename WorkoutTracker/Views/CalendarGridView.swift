@@ -119,7 +119,6 @@ extension Date: @retroactive Identifiable {
 
 #Preview {
     let today = Date()
-    let testMonth = CalendarMonth(monthDate: today)
     
     CalendarGridView()
         .padding()
