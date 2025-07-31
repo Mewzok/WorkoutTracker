@@ -3,7 +3,7 @@
 //  WorkoutTracker
 //
 //  Created by Student on 7/15/25.
-//
+//  Design of individual workout cards
 
 import SwiftUI
 

@@ -3,7 +3,7 @@
 //  WorkoutTracker
 //
 //  Created by Student on 7/29/25.
-//
+//  Main exercise list page
 
 import SwiftUI
 import SwiftData
@@ -19,8 +19,7 @@ struct ExerciseListView: View {
                 ForEach(exercises) { exercise in
                     NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                         VStack(alignment: .leading) {
-                            Text(exercise.name)
-                                .font(.headline)
+                            ExerciseListRowView(exercise: exercise, trailingButtons: nil)
                             Text("Weight: \(exercise.currentWeight, specifier: "%.1f") lbs | Reps: \(exercise.currentReps) | Sets: \(exercise.sets)")
                                 .font(.caption)
                                 .foregroundColor(.gray)

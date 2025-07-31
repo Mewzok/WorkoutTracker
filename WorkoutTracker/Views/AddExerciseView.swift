@@ -3,7 +3,7 @@
 //  WorkoutTracker
 //
 //  Created by Student on 7/29/25.
-//
+//  Exercise creation view, seen when adding a new exercise but not modifying an existing one
 
 import SwiftUI
 

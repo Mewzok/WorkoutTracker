@@ -3,7 +3,7 @@
 //  WorkoutTracker
 //
 //  Created by Student on 7/15/25.
-//
+//  Exercise modification/progress update view, seen when selecting an already existing exercise
 
 import SwiftUI
 
@@ -101,6 +101,6 @@ struct ExerciseDetailView: View {
 
 #Preview {
     NavigationStack {
-        ExerciseDetailView(exercise: Exercise.sampleData[0])
+        ExerciseDetailView(exercise: Exercise(name: "EX 1", sets: 3, minReps: 4, maxReps: 6, warmupSets: 0, progressHistory: []))
     }
 }
