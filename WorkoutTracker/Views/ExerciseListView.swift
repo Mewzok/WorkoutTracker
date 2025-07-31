@@ -40,7 +40,9 @@ struct ExerciseListView: View {
                 }
             }
             .sheet(isPresented: $showingAddExercise) {
-                AddExerciseView()
+                NavigationStack {
+                    AddExerciseView()
+                }
             }
         }
     }
