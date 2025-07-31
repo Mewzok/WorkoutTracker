@@ -6,18 +6,20 @@
 //
 
 import Foundation
+import SwiftData
 import ThemeKit
 
-struct Workout: Identifiable {
-    let id: UUID
+@Model
+class Workout: Identifiable {
     var name: String
     var theme: Theme
     var exercises: [Exercise]
+    var day: String?
     
-    init(id: UUID = UUID(), name: String, theme: Theme, exercises: [Exercise]) {
-        self.id = id
+    init(name: String, theme: Theme, exercises: [Exercise], day: String?) {
         self.name = name
         self.theme = theme
         self.exercises = exercises
+        self.day = day
     }
 }

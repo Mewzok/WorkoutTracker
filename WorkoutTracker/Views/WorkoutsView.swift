@@ -13,7 +13,7 @@ struct WorkoutsView: View {
     var body: some View {
         NavigationStack {
             List(workouts) { workout in
-                NavigationLink(destination: ExercisesView(workout: workout)) {
+                NavigationLink(destination: AddWorkoutView()) {
                     WorkoutCardView(workout: workout)
                 }
                 .listRowBackground(workout.theme.mainColor)
