@@ -20,6 +20,18 @@ struct WorkoutsView: View {
     @State private var workoutToDelete: Workout? = nil
     @State private var showingDeleteAlert = false
     
+    // array of day orders for sorting
+    let daysOrder = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    
+    // sort workouts
+    var sortedWorkouts: [Workout] {
+        workouts.sorted { w1, w2 in
+            let index1 = daysOrder.firstIndex(of: w1.day ?? "") ?? Int.max
+            let index2 = daysOrder.firstIndex(of: w2.day ?? "") ?? Int.max
+            return index1 < index2
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -39,7 +51,7 @@ struct WorkoutsView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
-                        ForEach(workouts) { workout in
+                        ForEach(sortedWorkouts) { workout in
                             NavigationLink(destination: AddWorkoutView(workout: workout, isModal: false)) {
                                 WorkoutCardView(workout: workout)
                             }
@@ -47,7 +59,7 @@ struct WorkoutsView: View {
                         }
                         .onDelete { indexSet in
                             if let index = indexSet.first {
-                                workoutToDelete = workouts[index]
+                                workoutToDelete = sortedWorkouts[index]
                                 showingDeleteAlert = true
                             }
                         }
