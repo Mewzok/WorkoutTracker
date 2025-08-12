@@ -10,7 +10,7 @@ import ThemeKit
 
 struct AddWorkoutView: View {
     @Bindable var workout: Workout
-    var isModal: Bool = true // determine which presentation style to use
+    var isModal: Bool = true // determine which presentation style, tells if new or modifying
     
     @State private var showAlert = false
     @State private var isPresentingSelectView = false

@@ -9,15 +9,14 @@ import SwiftUI
 
 struct AddExerciseView: View {
     @Bindable var exercise: Exercise
+    var isModal: Bool = true // determine which presentation style, tells if new or modifying
     
-    @State private var exerciseName = ""
-    @State private var sets = ""
-    @State private var minReps = ""
-    @State private var maxReps = ""
-    @State private var warmupSets = ""
-    
-    @State private var currentWeight = ""
-    @State private var currentReps = ""
+    @State private var setsString: String = ""
+    @State private var minRepsString: String = ""
+    @State private var maxRepsString: String = ""
+    @State private var warmupSetsString: String = ""
+    @State private var currentWeightString: String = ""
+    @State private var currentRepsString: String = ""
     
     @State private var showAlert = false
     
@@ -30,15 +29,15 @@ struct AddExerciseView: View {
             Form {
                 // name
                 Section(header: Text("Exercise Details")) {
-                    TextField("Exercise Name", text: $exerciseName)
+                    TextField("Exercise Name", text: $exercise.name)
                     
                     // sets
                     HStack {
-                        TextField("Number of sets", text: $sets)
+                        TextField("Number of sets", text: $setsString)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.leading)
-                            .onChange(of: sets) {
-                                sets = sets.filter { "0123456789".contains($0) }
+                            .onChange(of: setsString) {
+                                setsString = setsString.filter { "0123456789".contains($0) }
                             }
                         Text("sets")
                             .frame(alignment: .leading)
@@ -46,34 +45,34 @@ struct AddExerciseView: View {
                     
                     // reps
                     HStack {
-                        TextField("Minimum number of reps", text: $minReps)
+                        TextField("Minimum number of reps", text: $minRepsString)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.leading)
-                            .onChange(of: minReps) {
-                                minReps = minReps.filter { "0123456789".contains($0) }
+                            .onChange(of: minRepsString) {
+                                minRepsString = minRepsString.filter { "0123456789".contains($0) }
                             }
-                        Text("reps")
+                        Text("min reps")
                             .frame(alignment: .leading)
                     }
                     HStack {
-                        TextField("Maximum number of reps", text: $maxReps)
+                        TextField("Maximum number of reps", text: $maxRepsString)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.leading)
-                            .onChange(of: maxReps) {
-                                maxReps = maxReps.filter { "0123456789".contains($0) }
+                            .onChange(of: maxRepsString) {
+                                maxRepsString = maxRepsString.filter { "0123456789".contains($0) }
                             }
-                        Text("reps")
+                        Text("max reps")
                             .frame(alignment: .leading)
                     }
                     // warmup?
                     HStack {
-                        TextField("Warmup sets", text: $warmupSets)
+                        TextField("Warmup sets", text: $warmupSetsString)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.leading)
-                            .onChange(of: warmupSets) {
-                                warmupSets = warmupSets.filter { "0123456789".contains($0) }
+                            .onChange(of: warmupSetsString) {
+                                warmupSetsString = warmupSetsString.filter { "0123456789".contains($0) }
                             }
-                        Text("sets")
+                        Text("warmup sets")
                             .frame(alignment: .leading)
                     }
                 }
@@ -81,11 +80,11 @@ struct AddExerciseView: View {
                 Section(header: Text("Your Stats (optional)")) {
                     // current weight
                     HStack {
-                        TextField("Current weight", text: $currentWeight)
+                        TextField("Current weight", text: $currentWeightString)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.leading)
-                            .onChange(of: currentWeight) {
-                                currentWeight = currentWeight.filter { ".0123456789".contains($0) }
+                            .onChange(of: currentWeightString) {
+                                currentWeightString = currentWeightString.filter { ".0123456789".contains($0) }
                             }
                         Text("lbs")
                             .frame(alignment: .leading)
@@ -93,23 +92,26 @@ struct AddExerciseView: View {
                     
                     // current reps
                     HStack {
-                        TextField("Current reps", text: $currentReps)
+                        TextField("Current reps", text: $currentRepsString)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.leading)
-                            .onChange(of: currentReps) {
-                                currentReps = currentReps.filter { "0123456789".contains($0) }
+                            .onChange(of: currentRepsString) {
+                                currentRepsString = currentRepsString.filter { "0123456789".contains($0) }
                             }
                         Text("reps")
                             .frame(alignment: .leading)
                     }
                 }
             }
+            .navigationTitle(isModal ? "Add Exercise" : "View Exercise")
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        context.delete(exercise)
-                        try? context.save()
-                        dismiss()
+                if isModal {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            context.delete(exercise)
+                            try? context.save()
+                            dismiss()
+                        }
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
@@ -133,29 +135,44 @@ struct AddExerciseView: View {
         } message: {
             Text("Please enter a name for your exercise before saving.")
         }
+        .onAppear {
+            if isModal == false {
+                setsString = String(exercise.sets)
+                minRepsString = String(exercise.minReps)
+                maxRepsString = String(exercise.maxReps)
+                warmupSetsString = String(exercise.warmupSets)
+                
+                currentWeightString = String(format: "%.2f", exercise.currentWeight)
+                currentRepsString = String(exercise.currentReps)
+            }
+        }
     }
     
     
     private func saveExercise() throws {
         // convert user input strings into ints and doubles for saving
-        let setsInt = Int(sets) ?? 0
-        let minRepsInt = Int(minReps) ?? 0
-        let maxRepsInt = Int(maxReps) ?? 0
-        let warmupSetsInt = Int(warmupSets) ?? 0
+        let setsInt = Int(setsString.trimmingCharacters(in: .whitespaces)) ?? 0
+        let minRepsInt = Int(minRepsString.trimmingCharacters(in: .whitespaces)) ?? 0
+        let maxRepsInt = Int(maxRepsString.trimmingCharacters(in: .whitespaces)) ?? 0
+        let warmupSetsInt = Int(warmupSetsString.trimmingCharacters(in: .whitespaces)) ?? 0
         
         var progressHistory: [ProgressEntry] = []
         
-        if currentWeight != "" || currentReps != "" {
-            let currentWeightDouble = Double(currentWeight) ?? 0.0
-            let currentRepsInt = Int(currentReps) ?? 0
+        if currentWeightString != "" || currentRepsString != "" {
+            let currentWeightDouble = Double(currentWeightString.trimmingCharacters(in: .whitespaces)) ?? 0.0
+            let currentRepsInt = Int(currentRepsString.trimmingCharacters(in: .whitespaces)) ?? 0
             
             // create progress entry
             let progress = ProgressEntry(date: .now, weight: currentWeightDouble, reps: currentRepsInt)
             progressHistory = [progress]
         }
-            
-            // create full exercise object
-            let exercise = Exercise(name: exerciseName, sets: setsInt, minReps: minRepsInt, maxReps: maxRepsInt, warmupSets: warmupSetsInt, progressHistory: progressHistory)
+        
+        // modify exercise with new values
+        exercise.sets = setsInt
+        exercise.minReps = minRepsInt
+        exercise.maxReps = maxRepsInt
+        exercise.warmupSets = warmupSetsInt
+        exercise.progressHistory = progressHistory
         
         // save to model context
         context.insert(exercise)

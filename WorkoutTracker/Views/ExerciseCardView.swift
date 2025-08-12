@@ -15,21 +15,28 @@ struct ExerciseCardView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(exercise.name)
                     .font(.headline)
+                    .foregroundColor(.primary)
                 
                 Text("\(exercise.sets)x\(exercise.currentReps) @ \(exercise.currentWeight, specifier: "%.1f") lbs")
-                
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
             }
+            
             Spacer()
+            
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 12)
-            .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 2)
+            .fill(LinearGradient(gradient: Gradient(colors: [Color(.systemBackground), Color(.secondarySystemBackground)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+            .overlay(RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray.opacity(0.15), lineWidth: 1))
+            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 3)
         )
+        .padding(.horizontal)
     }
 }
 
 #Preview() {
-    let exercise = Exercise.sampleData[0]
-    ExerciseCardView(exercise: exercise)
+    ExerciseCardView(exercise: Exercise(name: "Example Exercise", sets: 5, minReps: 4, maxReps: 6, warmupSets: 4, progressHistory: []))
 
 }

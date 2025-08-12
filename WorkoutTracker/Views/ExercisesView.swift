@@ -38,7 +38,7 @@ struct ExercisesView: View {
                 } else {
                     List {
                         ForEach(exercises) { exercise in
-                            NavigationLink(destination: AddExerciseView(exercise: exercise)) {
+                            NavigationLink(destination: AddExerciseView(exercise: exercise, isModal: false)) {
                                 ExerciseCardView(exercise: exercise)
                             }
                             //.listRowBackground(exercise.theme.mainColor)
@@ -80,7 +80,7 @@ struct ExercisesView: View {
         .sheet(item: $newExercise, onDismiss: {
             newExercise = nil
         }) { exercise in
-            AddExerciseView(exercise: exercise)
+            AddExerciseView(exercise: exercise, isModal: true)
                 .environment(\.modelContext, context)
         }
     }
