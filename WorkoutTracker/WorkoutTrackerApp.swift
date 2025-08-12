@@ -19,7 +19,7 @@ struct WorkoutTrackerApp: App {
                         Label("Workouts", systemImage: "dumbbell")
                     }
                 
-                ExerciseListView()
+                ExercisesView()
                     .tabItem {
                         Label("Exercises", systemImage: "figure.walk")
                     }

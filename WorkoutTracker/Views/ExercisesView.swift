@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ExerciseListView: View {
+struct ExercisesView: View {
     @Environment(\.modelContext) private var context
     @Query private var exercises: [Exercise]
     @State private var showingAddExercise = false
@@ -55,5 +55,5 @@ struct ExerciseListView: View {
 }
 
 #Preview {
-    ExerciseListView()
+    ExercisesView()
 }
