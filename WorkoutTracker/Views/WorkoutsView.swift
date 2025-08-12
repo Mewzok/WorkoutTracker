@@ -27,7 +27,10 @@ struct WorkoutsView: View {
                         .font(.title2)
                         .foregroundColor(.gray)
                     Button("Add Workout") {
-                        isPresentingAddWorkout = true
+                        let workout = Workout(name: "", theme: .sky, exercises: [], day: nil)
+                        context.insert(workout)
+                        newWorkout = workout
+                        
                     }
                     .buttonStyle(.borderedProminent)
                 }
@@ -45,14 +48,22 @@ struct WorkoutsView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    isPresentingAddWorkout = true
+                    
                 } label: {
                     Image(systemName: "plus")
                 }
             }
         }
-        .sheet(isPresented: $isPresentingAddWorkout) {
-            AddWorkoutView(workout: Workout(name: "", theme: .sky, exercises: [], day: nil))
+        .sheet(item: $newWorkout, onDismiss: {
+            newWorkout = nil
+        }) { workout in
+            AddWorkoutView(workout: workout)
+        }
+        .onAppear {
+            print("Workouts loaded:", workouts.count)
+            for w in workouts {
+                print("Loaded workout:", w.name)
+            }
         }
     }
 }

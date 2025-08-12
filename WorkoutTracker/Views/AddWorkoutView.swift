@@ -67,8 +67,11 @@ struct AddWorkoutView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
-                        context.insert(workout)
-                        try? context.save()
+                        do {
+                            try context.save()
+                        } catch {
+                            print("Failed to save workot:", error.localizedDescription)
+                        }
                         dismiss()
                     }
                 }

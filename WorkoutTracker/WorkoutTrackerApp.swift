@@ -30,6 +30,6 @@ struct WorkoutTrackerApp: App {
                     }
             }
         }
-        .modelContainer(for: [DailyLog.self, Exercise.self, ProgressEntry.self])
+        .modelContainer(for: [Workout.self, Exercise.self, ProgressEntry.self, DailyLog.self])
     }
 }
