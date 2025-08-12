@@ -9,48 +9,86 @@ import SwiftUI
 import SwiftData
 
 struct ExercisesView: View {
+    @State private var newExercise: Exercise? = nil
+    
     @Environment(\.modelContext) private var context
     @Query private var exercises: [Exercise]
-    @State private var showingAddExercise = false
+    
+    // deletion
+    @State private var exerciseToDelete: Exercise? = nil
+    @State private var showingDeleteAlert = false
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(exercises) { exercise in
-                    NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
-                        VStack(alignment: .leading) {
-                            ExerciseListRowView(exercise: exercise, trailingButtons: nil)
-                            Text("Weight: \(exercise.currentWeight, specifier: "%.1f") lbs | Reps: \(exercise.currentReps) | Sets: \(exercise.sets)")
-                                .font(.caption)
-                                .foregroundColor(.gray)
+            Group {
+                if exercises.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "figure.walk")
+                            .font(.system(size: 64))
+                            .foregroundColor(.gray)
+                        Text("No exercises yet.")
+                            .font(.title2)
+                            .foregroundColor(.gray)
+                        Button("Add Exercise") {
+                            addButtonActions()
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    List {
+                        ForEach(exercises) { exercise in
+                            NavigationLink(destination: AddExerciseView(exercise: exercise)) {
+                                ExerciseCardView(exercise: exercise)
+                            }
+                            //.listRowBackground(exercise.theme.mainColor)
+                        }
+                        .onDelete { indexSet in
+                            if let index = indexSet.first {
+                                exerciseToDelete = exercises[index]
+                                showingDeleteAlert = true
+                            }
                         }
                     }
+                    .alert("Delete Exercise?", isPresented: $showingDeleteAlert) {
+                        Button("Delete", role: .destructive) {
+                            if let exercise = exerciseToDelete {
+                                context.delete(exercise)
+                                try? context.save()
+                                exerciseToDelete = nil
+                            }
+                        }
+                        Button("Cancel", role: .cancel) {
+                            exerciseToDelete = nil
+                        }
+                    } message: {
+                        Text("Are you sure you want to delete this exercise? This action cannot be undone.")
+                    }
                 }
-                .onDelete(perform: deleteExercises)
             }
-            .navigationTitle("My Exercises")
+            .navigationTitle("Exercises")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        showingAddExercise = true
+                        addButtonActions()
                     } label: {
                         Label("Add", systemImage: "plus")
                     }
                 }
             }
-            .sheet(isPresented: $showingAddExercise) {
-                NavigationStack {
-                    AddExerciseView()
-                }
-            }
+        }
+        .sheet(item: $newExercise, onDismiss: {
+            newExercise = nil
+        }) { exercise in
+            AddExerciseView(exercise: exercise)
+                .environment(\.modelContext, context)
         }
     }
     
-    private func deleteExercises(at offsets: IndexSet) {
-        for index in offsets {
-            context.delete(exercises[index])
-        }
-        try? context.save()
+    private func addButtonActions() {
+        let exercise = Exercise(name: "", sets: 0, minReps: 0, maxReps: 0, warmupSets: 0, progressHistory: [])
+        context.insert(exercise)
+        newExercise = exercise
     }
 }
 

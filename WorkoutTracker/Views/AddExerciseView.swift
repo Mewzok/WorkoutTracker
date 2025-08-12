@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AddExerciseView: View {
+    @Bindable var exercise: Exercise
+    
     @State private var exerciseName = ""
     @State private var sets = ""
     @State private var minReps = ""
@@ -152,6 +154,6 @@ struct AddExerciseView: View {
 
 #Preview {
     NavigationStack {
-        AddExerciseView()
+        AddExerciseView(exercise: Exercise(name: "", sets: 0, minReps: 0, maxReps: 0, warmupSets: 0, progressHistory: []))
     }
 }

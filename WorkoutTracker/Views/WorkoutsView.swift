@@ -14,8 +14,6 @@ struct WorkoutsView: View {
     @Environment(\.modelContext) private var context
     @Query private var workouts: [Workout]
     
-    @State private var isPresentingAddWorkout = false
-    
     // deletion
     @State private var workoutToDelete: Workout? = nil
     @State private var showingDeleteAlert = false
@@ -99,7 +97,7 @@ struct WorkoutsView: View {
         }
     }
     
-    func addButtonActions() {
+    private func addButtonActions() {
         let workout = Workout(name: "", theme: .sky, exercises: [], day: nil)
         context.insert(workout)
         newWorkout = workout
