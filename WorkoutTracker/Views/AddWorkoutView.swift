@@ -10,6 +10,7 @@ import ThemeKit
 
 struct AddWorkoutView: View {
     @Bindable var workout: Workout
+    var isModal: Bool = true // determine which presentation style to use
     
     @State private var showAlert = false
     @State private var isPresentingSelectView = false
@@ -58,24 +59,37 @@ struct AddWorkoutView: View {
                         .navigationTitle("Select Exercises")
                 }
             }
-            .navigationTitle("Add Workout")
+            .navigationTitle(isModal ? "Add Workout" : "View Workout")
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
+                if isModal {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            context.delete(workout)
+                            try? context.save()
+                            dismiss()
+                        }
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
-                        do {
-                            try context.save()
-                        } catch {
-                            print("Failed to save workot:", error.localizedDescription)
+                        if workout.name.trimmingCharacters(in: .whitespaces).isEmpty {
+                            showAlert = true
+                        } else {
+                            do {
+                                try context.save()
+                            } catch {
+                                print("Failed to save workot:", error.localizedDescription)
+                            }
+                            dismiss()
                         }
-                        dismiss()
                     }
                 }
             }
+        }
+        .alert("Workout name required.", isPresented: $showAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Please enter a name for your workout before saving.")
         }
     }
 }
