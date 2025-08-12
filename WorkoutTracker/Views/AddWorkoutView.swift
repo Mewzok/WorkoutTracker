@@ -78,7 +78,7 @@ struct AddWorkoutView: View {
                             do {
                                 try context.save()
                             } catch {
-                                print("Failed to save workot:", error.localizedDescription)
+                                print("Failed to save workout:", error.localizedDescription)
                             }
                             dismiss()
                         }

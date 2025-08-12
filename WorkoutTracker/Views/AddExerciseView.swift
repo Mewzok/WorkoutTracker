@@ -26,101 +26,112 @@ struct AddExerciseView: View {
     
     
     var body: some View {
-        Form {
-            // name
-            Section(header: Text("Exercise Details")) {
-                TextField("Exercise Name", text: $exerciseName)
-                
-                // sets
-                HStack {
-                    TextField("Number of sets", text: $sets)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.leading)
-                        .onChange(of: sets) {
-                            sets = sets.filter { "0123456789".contains($0) }
-                        }
-                    Text("sets")
-                        .frame(alignment: .leading)
+        NavigationStack {
+            Form {
+                // name
+                Section(header: Text("Exercise Details")) {
+                    TextField("Exercise Name", text: $exerciseName)
+                    
+                    // sets
+                    HStack {
+                        TextField("Number of sets", text: $sets)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.leading)
+                            .onChange(of: sets) {
+                                sets = sets.filter { "0123456789".contains($0) }
+                            }
+                        Text("sets")
+                            .frame(alignment: .leading)
+                    }
+                    
+                    // reps
+                    HStack {
+                        TextField("Minimum number of reps", text: $minReps)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.leading)
+                            .onChange(of: minReps) {
+                                minReps = minReps.filter { "0123456789".contains($0) }
+                            }
+                        Text("reps")
+                            .frame(alignment: .leading)
+                    }
+                    HStack {
+                        TextField("Maximum number of reps", text: $maxReps)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.leading)
+                            .onChange(of: maxReps) {
+                                maxReps = maxReps.filter { "0123456789".contains($0) }
+                            }
+                        Text("reps")
+                            .frame(alignment: .leading)
+                    }
+                    // warmup?
+                    HStack {
+                        TextField("Warmup sets", text: $warmupSets)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.leading)
+                            .onChange(of: warmupSets) {
+                                warmupSets = warmupSets.filter { "0123456789".contains($0) }
+                            }
+                        Text("sets")
+                            .frame(alignment: .leading)
+                    }
                 }
                 
-                // reps
-                HStack {
-                    TextField("Minimum number of reps", text: $minReps)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.leading)
-                        .onChange(of: minReps) {
-                            minReps = minReps.filter { "0123456789".contains($0) }
-                        }
-                    Text("reps")
-                        .frame(alignment: .leading)
-                }
-                HStack {
-                    TextField("Maximum number of reps", text: $maxReps)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.leading)
-                        .onChange(of: maxReps) {
-                            maxReps = maxReps.filter { "0123456789".contains($0) }
-                        }
-                    Text("reps")
-                        .frame(alignment: .leading)
-                }
-                // warmup?
-                HStack {
-                    TextField("Warmup sets", text: $warmupSets)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.leading)
-                        .onChange(of: warmupSets) {
-                            warmupSets = warmupSets.filter { "0123456789".contains($0) }
-                        }
-                    Text("sets")
-                        .frame(alignment: .leading)
+                Section(header: Text("Your Stats (optional)")) {
+                    // current weight
+                    HStack {
+                        TextField("Current weight", text: $currentWeight)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.leading)
+                            .onChange(of: currentWeight) {
+                                currentWeight = currentWeight.filter { ".0123456789".contains($0) }
+                            }
+                        Text("lbs")
+                            .frame(alignment: .leading)
+                    }
+                    
+                    // current reps
+                    HStack {
+                        TextField("Current reps", text: $currentReps)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.leading)
+                            .onChange(of: currentReps) {
+                                currentReps = currentReps.filter { "0123456789".contains($0) }
+                            }
+                        Text("reps")
+                            .frame(alignment: .leading)
+                    }
                 }
             }
-            Section(header: Text("Your Stats (optional)")) {
-                // current weight
-                HStack {
-                    TextField("Current weight", text: $currentWeight)
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.leading)
-                        .onChange(of: currentWeight) {
-                            currentWeight = currentWeight.filter { ".0123456789".contains($0) }
-                        }
-                    Text("lbs")
-                        .frame(alignment: .leading)
-                }
-                
-                // current reps
-                HStack {
-                    TextField("Current reps", text: $currentReps)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.leading)
-                        .onChange(of: currentReps) {
-                            currentReps = currentReps.filter { "0123456789".contains($0) }
-                        }
-                    Text("reps")
-                        .frame(alignment: .leading)
-                }
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    dismiss()
-                }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done") {
-                    if exerciseName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        showAlert = true
-                    } else {
-                        try? saveExercise()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        context.delete(exercise)
+                        try? context.save()
                         dismiss()
                     }
                 }
-                .alert("Exercise name is required.", isPresented: $showAlert) {
-                    Button("OK", role: .cancel) {}
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        if exercise.name.trimmingCharacters(in: .whitespaces).isEmpty {
+                            showAlert = true
+                        } else {
+                            do {
+                                try saveExercise()
+                            } catch {
+                                print("Failed to save exercise:", error.localizedDescription)
+                            }
+                            dismiss()
+                        }
+                    }
                 }
             }
+        }
+        .alert("Exercise name is required.", isPresented: $showAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Please enter a name for your exercise before saving.")
         }
     }
     
