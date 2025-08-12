@@ -37,7 +37,7 @@ struct ExercisesView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
-                        ForEach(exercises) { exercise in
+                        ForEach(exercises.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }) { exercise in
                             NavigationLink(destination: AddExerciseView(exercise: exercise, isModal: false)) {
                                 ExerciseCardView(exercise: exercise)
                             }
