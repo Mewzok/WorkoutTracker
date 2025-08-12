@@ -3,7 +3,7 @@
 //  WorkoutTracker
 //
 //  Created by Student on 7/31/25.
-//
+//  This shows a new or currently existing workout and allows it to be created or edited
 
 import SwiftUI
 import ThemeKit

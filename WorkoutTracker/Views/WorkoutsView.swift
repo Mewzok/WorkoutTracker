@@ -50,7 +50,7 @@ struct WorkoutsView: View {
                 } else {
                     List {
                         ForEach(sortedWorkouts) { workout in
-                            NavigationLink(destination: AddWorkoutView(workout: workout, isModal: false)) {
+                            NavigationLink(destination: WorkoutDetailView(workout: workout)) {
                                 WorkoutCardView(workout: workout)
                             }
                             .listRowBackground(workout.theme.mainColor)
