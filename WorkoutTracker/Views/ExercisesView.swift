@@ -49,6 +49,7 @@ struct ExercisesView: View {
                                 showingDeleteAlert = true
                             }
                         }
+                        .listRowSeparator(.hidden)
                     }
                     .alert("Delete Exercise?", isPresented: $showingDeleteAlert) {
                         Button("Delete", role: .destructive) {

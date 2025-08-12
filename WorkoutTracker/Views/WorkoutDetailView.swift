@@ -29,6 +29,7 @@ struct WorkoutDetailView: View {
                 } else {
                     List(workout.exercises) { exercise in
                         ExerciseCardView(exercise: exercise)
+                            .listRowSeparator(.hidden)
                     }
                 }
                 
