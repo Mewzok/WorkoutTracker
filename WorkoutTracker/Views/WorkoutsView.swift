@@ -97,12 +97,6 @@ struct WorkoutsView: View {
             AddWorkoutView(workout: workout, isModal: true)
                 .environment(\.modelContext, context)
         }
-        .onAppear {
-            print("Workouts loaded:", workouts.count)
-            for w in workouts {
-                print("Loaded workout:", w.name)
-            }
-        }
     }
     
     func addButtonActions() {
