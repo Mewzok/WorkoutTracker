@@ -10,11 +10,13 @@ import SwiftData
 
 struct DayLogView: View {
     let date: Date
+    var didAddLog: ((Bool) -> Void)? = nil
+    
     @State private var noteText: String = ""
+    @State private var todayLog: DailyLog?
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
     @Query var allLogs: [DailyLog]
-    @State private var todayLog: DailyLog?
     
     var body: some View {
         NavigationStack {
@@ -40,16 +42,23 @@ struct DayLogView: View {
                     Spacer()
                     
                     Button("Save") {
+                        var added = false
                         if let existing = todayLog {
                             existing.note = noteText
                         } else {
                             let newLog = DailyLog(date: date)
                             newLog.appendNote(newNote: noteText)
                             modelContext.insert(newLog)
+                            added = true
+                            
+                            // change highlighted dates
+                            didAddLog?(true)
+                            
                         }
                         
                         do {
                             try modelContext.save()
+                            didAddLog?(added)
                         } catch {
                             print("Error saving log: \(error)")
                         }

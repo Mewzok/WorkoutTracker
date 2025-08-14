@@ -11,11 +11,12 @@ struct CalendarDay: Identifiable {
     let id = UUID()
     let date: Date
     let isInCurrentMonth: Bool
-    let hasLog: Bool?
+    let hasLog: Bool
 }
 
 struct CalendarMonth {
     let monthDate: Date
+    let highlightDates: Set<Date>
     
     func generateWeeks() -> [[CalendarDay]] {
         // gets user's calendar system, like Gregorian
@@ -46,7 +47,8 @@ struct CalendarMonth {
             for i in(numOfDaysInPrevMonth - daysNeeded)...numOfDaysInPrevMonth - 1 {
                 prevComponents.day = i
                 let date = calendar.date(from: prevComponents)!
-                days.append(CalendarDay(date: date, isInCurrentMonth: false, hasLog: nil))
+                let hasLog = highlightDates.contains(Calendar.current.startOfDay(for: date))
+                days.append(CalendarDay(date: date, isInCurrentMonth: true, hasLog: hasLog))
             }
         }
         
@@ -54,7 +56,8 @@ struct CalendarMonth {
         for day in 1...range.count {
             components.day = day
             let date = calendar.date(from: components)!
-            days.append(CalendarDay(date: date, isInCurrentMonth: true, hasLog: nil))
+            let hasLog = highlightDates.contains(Calendar.current.startOfDay(for: date))
+            days.append(CalendarDay(date: date, isInCurrentMonth: true, hasLog: hasLog))
         }
         
         // add next month's beginning days until week end
@@ -69,7 +72,8 @@ struct CalendarMonth {
             for i in 1...daysNeeded {
                 nextComponents.day = i
                 let date = calendar.date(from: nextComponents)!
-                days.append(CalendarDay(date: date, isInCurrentMonth: false, hasLog: nil))
+                let hasLog = highlightDates.contains(Calendar.current.startOfDay(for: date))
+                days.append(CalendarDay(date: date, isInCurrentMonth: true, hasLog: hasLog))
             }
         }
         

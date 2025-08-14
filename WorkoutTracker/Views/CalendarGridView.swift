@@ -6,11 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CalendarGridView: View {
     @State private var currentMonthOffset = 0
     @State private var selectedDate: Date? = nil
+    @State private var highlightDates: Set<Date> = []
+    
     @Environment(\.dismiss) var dismiss
+    
+    @Query var allLogs: [DailyLog]
     
     var body: some View {
         NavigationStack {
@@ -33,7 +38,7 @@ struct CalendarGridView: View {
                 .padding()
                 
                 let targetDate = Calendar.current.date(byAdding: .month, value: currentMonthOffset, to: Date())!
-                let month = CalendarMonth(monthDate: targetDate)
+                let month = CalendarMonth(monthDate: targetDate, highlightDates: highlightDates)
                 let weeks = month.generateWeeks()
                 
                 VStack(spacing: 4) {
@@ -51,7 +56,7 @@ struct CalendarGridView: View {
                     ForEach(weeks.indices, id: \.self) { weekIndex in
                         HStack(spacing: 4) {
                             ForEach(weeks[weekIndex]) { day in
-                                DayCellView(day: day, selectedDate: $selectedDate)
+                                DayCellView(day: day, isHighlighted: highlightDates.contains(Calendar.current.startOfDay(for: day.date)), selectedDate: $selectedDate)
                             }
                         }
                     }
@@ -67,7 +72,14 @@ struct CalendarGridView: View {
                 }
             }
             .sheet(item: $selectedDate) { date in
-                DayLogView(date: date)
+                DayLogView(date: date) { didAddLog in
+                    if didAddLog {
+                        highlightDates.insert(Calendar.current.startOfDay(for: date))
+                    }
+                }
+            }
+            .onAppear {
+                highlightDates = Set(allLogs.map { Calendar.current.startOfDay(for: $0.date)})
             }
         }
     }
@@ -83,6 +95,7 @@ func formattedMonthTitle(currentMonthOffset: Int) -> String {
 
 struct DayCellView: View {
     let day: CalendarDay
+    let isHighlighted: Bool
     @Binding var selectedDate: Date?
     
     var body: some View {
@@ -90,13 +103,12 @@ struct DayCellView: View {
             Text("\(day.date.dayNumber)")
                 .font(.body)
                 .foregroundColor(day.isInCurrentMonth ? .primary : .gray)
-            
-            if day.hasLog ?? false {
-                Circle()
-                    .fill(Color.blue)
-                    .frame(width: 6, height: 6)
+                .padding(6)
+                .background(
+                    Circle()
+                        .fill(isHighlighted ? Color.blue : Color.clear)
+                )
             }
-        }
         .frame(maxWidth: .infinity, minHeight: 40)
         .padding(4)
         .background(RoundedRectangle(cornerRadius: 6)
@@ -118,8 +130,6 @@ extension Date: @retroactive Identifiable {
 }
 
 #Preview {
-    let today = Date()
-    
     CalendarGridView()
         .padding()
 }

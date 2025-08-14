@@ -88,6 +88,7 @@ struct ExerciseDetailView: View {
                 }
                 .padding(.vertical, 4)
                 .sheet(isPresented: $showingCalendar) {
+                    let logDates = Set(exercise.progressHistory.map { Calendar.current.startOfDay(for: $0.date) })
                     CalendarGridView()
                 }
                 ForEach(exercise.progressHistory.sorted(by: { $0.date > $1.date}), id: \.self) { entry in
