@@ -42,23 +42,29 @@ struct DayLogView: View {
                     Spacer()
                     
                     Button("Save") {
+                        let trimmed = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
                         var added = false
-                        if let existing = todayLog {
-                            existing.note = noteText
+                        
+                        if trimmed.isEmpty {
+                            if let existing = todayLog {
+                                modelContext.delete(existing)
+                                didAddLog?(false)
+                            }
                         } else {
-                            let newLog = DailyLog(date: date)
-                            newLog.appendNote(newNote: noteText)
-                            modelContext.insert(newLog)
-                            added = true
-                            
+                            if let existing = todayLog {
+                                existing.note = noteText
+                            } else {
+                                let newLog = DailyLog(date: date)
+                                newLog.appendNote(newNote: noteText)
+                                modelContext.insert(newLog)
+                                added = true
+                            }
                             // change highlighted dates
-                            didAddLog?(true)
-                            
+                            didAddLog?(added)
                         }
                         
                         do {
                             try modelContext.save()
-                            didAddLog?(added)
                         } catch {
                             print("Error saving log: \(error)")
                         }

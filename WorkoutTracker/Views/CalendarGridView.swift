@@ -73,8 +73,11 @@ struct CalendarGridView: View {
             }
             .sheet(item: $selectedDate) { date in
                 DayLogView(date: date) { didAddLog in
+                    let day = Calendar.current.startOfDay(for: date)
                     if didAddLog {
-                        highlightDates.insert(Calendar.current.startOfDay(for: date))
+                        highlightDates.insert(day)
+                    } else {
+                        highlightDates.remove(day)
                     }
                 }
             }
@@ -103,10 +106,10 @@ struct DayCellView: View {
             Text("\(day.date.dayNumber)")
                 .font(.body)
                 .foregroundColor(day.isInCurrentMonth ? .primary : .gray)
-                .padding(6)
+                .frame(width: 28, height: 28)
                 .background(
-                    Circle()
-                        .fill(isHighlighted ? Color.blue : Color.clear)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(day.hasLog == true ? Color.blue.opacity(0.4) : Color.clear)
                 )
             }
         .frame(maxWidth: .infinity, minHeight: 40)
