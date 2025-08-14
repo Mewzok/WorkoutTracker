@@ -48,7 +48,23 @@ struct ExerciseDetailView: View {
                         .frame(alignment: .leading)
                 }
                 Button("Update Progress") {
+                    // convert strings
+                    guard let weight = Double(currentWeightString),
+                          let reps = Int(currentRepsString)
+                    else {
+                        return // maybe show alert later
+                    }
                     
+                    // create new progress entry while updating weight and reps
+                    let newEntry = ProgressEntry(date: Date(), weight: weight, reps: reps)
+                    exercise.progressHistory.append(newEntry)
+                    
+                    // save context
+                    do {
+                        try context.save()
+                    } catch {
+                        print("Failed to save exercise progress: \(error)")
+                    }
                 }
             }
             
