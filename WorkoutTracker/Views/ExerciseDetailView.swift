@@ -79,7 +79,7 @@ struct ExerciseDetailView: View {
                 .sheet(isPresented: $showingCalendar) {
                     CalendarGridView()
                 }
-                ForEach(exercise.progressHistory, id: \.self) { entry in
+                ForEach(exercise.progressHistory.sorted(by: { $0.date > $1.date}), id: \.self) { entry in
                     NavigationLink(destination: DayLogView(date: entry.date)) {
                         HStack {
                             Text(entry.date.formatted(date: .abbreviated, time: .omitted))
