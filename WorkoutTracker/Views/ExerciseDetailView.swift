@@ -6,6 +6,7 @@
 //  Exercise modification/progress update view, seen when selecting an already existing exercise
 
 import SwiftUI
+import SwiftData
 
 struct ExerciseDetailView: View {
     @Bindable var exercise: Exercise
@@ -15,6 +16,7 @@ struct ExerciseDetailView: View {
     @State private var currentRepsString: String = ""
     
     @Environment(\.modelContext) private var context
+    @Query var allLogs: [DailyLog]
     
     var body: some View {
         Form {
@@ -55,9 +57,18 @@ struct ExerciseDetailView: View {
                         return // maybe show alert later
                     }
                     
+                    // assign old weight and reps
+                    let oldWeight = exercise.currentWeight
+                    let oldReps = exercise.currentReps
+                    
                     // create new progress entry while updating weight and reps
                     let newEntry = ProgressEntry(date: Date(), weight: weight, reps: reps)
                     exercise.progressHistory.append(newEntry)
+                    
+                    // add note to DailyLog
+                    let log = DailyLog.getOrCreateDailyLog(for: Date(), context: context, existingLogs: allLogs)
+                    
+                    log.appendChange(oldWeight: oldWeight, newWeight: exercise.currentWeight, oldReps: oldReps, newReps: exercise.currentReps)
                     
                     // save context
                     do {

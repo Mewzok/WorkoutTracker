@@ -43,7 +43,8 @@ struct DayLogView: View {
                         if let existing = todayLog {
                             existing.note = noteText
                         } else {
-                            let newLog = DailyLog(date: date, note: noteText)
+                            let newLog = DailyLog(date: date)
+                            newLog.appendNote(newNote: noteText)
                             modelContext.insert(newLog)
                         }
                         

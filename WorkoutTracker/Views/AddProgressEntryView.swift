@@ -97,7 +97,8 @@ struct AddProgressEntryView: View {
         if let log = existingLog {
             log.note += "\n\(summary)"
         } else {
-            let newLog = DailyLog(date: date, note: summary)
+            let newLog = DailyLog(date: date)
+            newLog.appendNote(newNote: summary)
             modelContext.insert(newLog)
         }
     }
