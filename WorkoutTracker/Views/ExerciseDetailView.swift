@@ -14,14 +14,7 @@ struct ExerciseDetailView: View {
     @State private var currentWeightString: String = ""
     @State private var currentRepsString: String = ""
     
-    private static let monthFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        return formatter
-    } ()
-    
-    @State private var groupedHistory: [String: [ProgressEntry]] = [:]
-    @State private var sortedHistoryKeys: [String] = []
+    @Environment(\.modelContext) private var context
     
     var body: some View {
         Form {
@@ -58,62 +51,33 @@ struct ExerciseDetailView: View {
                     
                 }
             }
-             
-             // progress history section
-             Section(header: Text("Progress History")) {
-             Button() {
-             showingCalendar = true
-             } label: {
-             Label("Show Calendar", systemImage: "calendar")
-             }
-             .padding(.vertical, 4)
-             .sheet(isPresented: $showingCalendar) {
-             CalendarGridView()
-             }
-             
-                ForEach(sortedHistoryKeys, id: \.self) { month in
-                    Section(
-                        header: Text(month)
-                        .font(.title3)
-                        .bold()
-                        .padding(.vertical, 8)
-                    ) {
-                            if let entries = groupedHistory[month] {
-                                ForEach(entries.indices, id: \.self) { idx in
-                                    NavigationLink(destination: DayLogView(entry: $groupedHistory[month]![idx])) {
-                                        HStack {
-                                            let entry = entries[idx]
-                                            HStack {
-                                                Text(entry.date.formatter(date: .abbreviate, time: .omitted))
-                                                Spacer()
-                                                Text("\(entry.weight, specifier: "%.1f") lbs x \(entry.reps) reps")
-                                                    .foregroundColor(.secondary)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+            
+            // progress history section
+            Section(header: Text("Progress History")) {
+                Button() {
+                    showingCalendar = true
+                } label: {
+                    Label("Show Calendar", systemImage: "calendar")
+                }
+                .padding(.vertical, 4)
+                .sheet(isPresented: $showingCalendar) {
+                    CalendarGridView()
+                }
+                ForEach(exercise.progressHistory, id: \.self) { entry in
+                    NavigationLink(destination: DayLogView(date: entry.date)) {
+                        HStack {
+                            Text(entry.date.formatted(date: .abbreviated, time: .omitted))
+                                 Spacer()
+                                 Text("\(entry.weight, specifier: "%.1f") lbs x \(entry.reps) reps")
+                                .foregroundColor(.secondary)
                         }
+                    }
                 }
             }
         }
         .onAppear {
             currentWeightString = String(format: "%.2f", exercise.currentWeight)
             currentRepsString = String(exercise.currentReps)
-            
-            let grouped = Dictionary(grouping: exercise.progressHistory) { entry in
-                Self.monthFormatter.string(from: entry.date)
-            }
-            groupedHistory = grouped
-            sortedHistoryKeys = grouped.keys.sorted {
-                guard
-                    let date1 = Self.monthFormatter.date(from: $0),
-                    let date2 = Self.monthFormatter.date(from: $1)
-                else {
-                    return false
-                }
-                return date1 > date2
-            }
         }
     }
 }
