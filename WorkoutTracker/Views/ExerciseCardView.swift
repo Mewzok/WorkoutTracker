@@ -17,7 +17,7 @@ struct ExerciseCardView: View {
                     .font(.headline)
                     .foregroundColor(.primary)
                 
-                Text("\(exercise.sets)x\(exercise.currentReps) @ \(exercise.currentWeight, specifier: "%.1f") lbs")
+                Text("\(exercise.sets)x\(exercise.currentReps) @ \(exercise.currentWeight, specifier: "%g") lbs")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

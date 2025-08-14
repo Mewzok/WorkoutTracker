@@ -142,7 +142,7 @@ struct AddExerciseView: View {
                 maxRepsString = String(exercise.maxReps)
                 warmupSetsString = String(exercise.warmupSets)
                 
-                currentWeightString = String(format: "%.2f", exercise.currentWeight)
+                currentWeightString = String(format: "%g", exercise.currentWeight)
                 currentRepsString = String(exercise.currentReps)
             }
         }

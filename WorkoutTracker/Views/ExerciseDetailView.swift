@@ -84,7 +84,7 @@ struct ExerciseDetailView: View {
                         HStack {
                             Text(entry.date.formatted(date: .abbreviated, time: .omitted))
                                  Spacer()
-                                 Text("\(entry.weight, specifier: "%.1f") lbs x \(entry.reps) reps")
+                                 Text("\(entry.weight, specifier: "%g") lbs x \(entry.reps) reps")
                                 .foregroundColor(.secondary)
                         }
                     }
@@ -92,7 +92,7 @@ struct ExerciseDetailView: View {
             }
         }
         .onAppear {
-            currentWeightString = String(format: "%.2f", exercise.currentWeight)
+            currentWeightString = String(format: "%g", exercise.currentWeight)
             currentRepsString = String(exercise.currentReps)
         }
     }
