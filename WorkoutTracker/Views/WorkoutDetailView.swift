@@ -28,8 +28,10 @@ struct WorkoutDetailView: View {
                     Spacer()
                 } else {
                     List(workout.exercises) { exercise in
-                        ExerciseCardView(exercise: exercise)
-                            .listRowSeparator(.hidden)
+                        NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                            ExerciseCardView(exercise: exercise)
+                                .listRowSeparator(.hidden)
+                        }
                     }
                 }
                 
