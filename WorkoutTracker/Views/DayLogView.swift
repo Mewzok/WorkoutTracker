@@ -10,18 +10,18 @@ import SwiftData
 
 struct DayLogView: View {
     @Bindable var exercise: Exercise
+    
     let date: Date
     var didAddLog: ((Bool) -> Void)? = nil
     
     @State private var noteText: String = ""
-    @State private var todayLog: DailyLog?
+    
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
-    @Query var allLogs: [DailyLog]
     
     var body: some View {
-        var daysEntries: [ProgressEntry] {
-            exercise.progressHistory.filter { Calendar.current.isDate($0.date, inSameDayAs: date)}
+        var daysEntries: ProgressEntry? {
+            exercise.progressHistory.first { Calendar.current.isDate($0.date, inSameDayAs: date)}
         }
         
         NavigationStack {
@@ -48,32 +48,25 @@ struct DayLogView: View {
                     
                     Button("Save") {
                         let trimmed = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
-                        var added = false
                         
-                        if trimmed.isEmpty {
-                            if let existing = todayLog {
-                                modelContext.delete(existing)
-                                didAddLog?(false)
-                            }
-                        } else {
-                            if let existing = todayLog {
-                                existing.note = noteText
-                            } else {
-                                let newLog = DailyLog(date: date)
-                                newLog.appendNote(newNote: noteText)
-                                modelContext.insert(newLog)
-                                added = true
-                            }
-                            // change highlighted dates
-                            didAddLog?(added)
+                        if let entry = daysEntries {
+                            entry.note = trimmed
+                            
+                        } else if !trimmed.isEmpty {
+                            let newEntry = ProgressEntry(date: date, weight: exercise.currentWeight, reps: exercise.currentReps)
+                            newEntry.note = trimmed
+                            exercise.progressHistory.append(newEntry)
+                            
                         }
+                        
+                            // change highlighted dates
+                        didAddLog?(trimmed.isEmpty == false)
                         
                         do {
                             try modelContext.save()
                         } catch {
                             print("Error saving log: \(error)")
                         }
-                        
                         dismiss()
                     }
                     .foregroundColor(.blue)
@@ -85,11 +78,8 @@ struct DayLogView: View {
             .padding()
             .navigationTitle("Day Log")
             .navigationBarTitleDisplayMode(.inline)
-        }
-        .onAppear {
-            if let existing = allLogs.first(where: { Calendar.current.isDate($0.date, inSameDayAs: date) }) {
-                todayLog = existing
-                noteText = existing.note
+            .onAppear {
+                noteText = daysEntries?.note ?? ""
             }
         }
     }

@@ -10,7 +10,6 @@ import SwiftData
 
 struct AddProgressEntryView: View {
     @Binding var exercise: Exercise
-    @Environment(\.dismiss) var dismiss
     
     @State private var weight: Double = 0
     @State private var reps: Int = 0
@@ -18,6 +17,7 @@ struct AddProgressEntryView: View {
     
     @Query var allLogs: [DailyLog]
     @Environment(\.modelContext) var modelContext
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         NavigationStack {
@@ -68,10 +68,11 @@ struct AddProgressEntryView: View {
     }
     
     private func saveEntry() {
+        // check/update existing entry
         if let existingEntry = exercise.progressHistory.first(where: { Calendar.current.isDate($0.date, inSameDayAs: date) }) {
-            // update existing entry
-            var oldWeight = existingEntry.weight
-            var oldReps = existingEntry.reps
+            // save old values to compare in notes
+            let oldWeight = existingEntry.weight
+            let oldReps = existingEntry.reps
             
             existingEntry.weight = weight
             existingEntry.reps = reps
@@ -80,11 +81,14 @@ struct AddProgressEntryView: View {
         } else {
             // create new entry
             let newEntry = ProgressEntry(date: date, weight: weight, reps: reps)
+            
             newEntry.note = "Weight: \(Int(weight)) lbs, Reps: \(reps)"
+            
             exercise.progressHistory.append(newEntry)
         }
     }
     
+    // generate dynamic note
     private func logNote(originalWeight: Double, originalReps: Int, weight: Double, reps: Int) -> String {
         var changes: [String] = []
         
@@ -104,24 +108,11 @@ struct AddProgressEntryView: View {
             }
         }
         
-        let summary = changes.joined(separator: " ")
-        return summary
-    }
-    
-    private func autoLog(summary: String, for date: Date) {
-        let existingLog = allLogs.first(where: { Calendar.current.isDate($0.date, inSameDayAs: date)} )
-        
-        if let log = existingLog {
-            log.note += "\n\(summary)"
-        } else {
-            let newLog = DailyLog(date: date)
-            newLog.appendNote(newNote: summary)
-            modelContext.insert(newLog)
-        }
+        return changes.joined(separator: " ")
     }
 }
 
 #Preview {
-    @Previewable @State var exercise = Exercise.sampleData[0]
+    @Previewable @State var exercise = Exercise(name: "", sets: 0, minReps: 0, maxReps: 0, warmupSets: 0, progressHistory: [])
     AddProgressEntryView(exercise: $exercise)
 }

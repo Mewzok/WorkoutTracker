@@ -13,11 +13,12 @@ class ProgressEntry: Identifiable {
     var date: Date
     var weight: Double
     var reps: Int
-    var note: String = ""
+    var note: String
     
-    init(date: Date, weight: Double, reps: Int) {
+    init(date: Date, weight: Double, reps: Int, note: String = "") {
         self.date = date
         self.weight = weight
         self.reps = reps
+        self.note = note
     }
 }

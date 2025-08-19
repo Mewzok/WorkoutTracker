@@ -17,8 +17,6 @@ struct CalendarGridView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @Query var allLogs: [DailyLog]
-    
     var body: some View {
         NavigationStack {
             VStack {
@@ -69,6 +67,7 @@ struct CalendarGridView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
+                        print("Print statement. Closed")
                         dismiss()
                     }
                 }
@@ -84,7 +83,8 @@ struct CalendarGridView: View {
                 }
             }
             .onAppear {
-                highlightDates = Set(allLogs.map { Calendar.current.startOfDay(for: $0.date)})
+                highlightDates = Set(exercise.progressHistory.map { Calendar.current.startOfDay(for: $0.date)})
+                print("Fetched entries: ", highlightDates)
             }
         }
     }
@@ -118,10 +118,11 @@ struct DayCellView: View {
         .padding(4)
         .background(RoundedRectangle(cornerRadius: 6)
             .fill(Color(.systemBackground))
-            .onTapGesture {
-                selectedDate = day.date
-            }
         )
+        .onTapGesture {
+            print("Tapped day: \(day.date)")
+            selectedDate = day.date
+        }
     }
 }
 

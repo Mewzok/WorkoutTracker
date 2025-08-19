@@ -49,6 +49,8 @@ struct ExerciseDetailView: View {
                     Text("reps")
                         .frame(alignment: .leading)
                 }
+                
+                // progress entry
                 Button("Update Progress") {
                     // convert strings
                     guard let weight = Double(currentWeightString),
@@ -57,20 +59,29 @@ struct ExerciseDetailView: View {
                         return // maybe show alert later
                     }
                     
-                    // assign old weight and reps
-                    let oldWeight = exercise.currentWeight
-                    let oldReps = exercise.currentReps
+                    // check for existing entry
+                    let today = Calendar.current.startOfDay(for: Date())
+                    if let existingEntry = exercise.progressHistory.first(where: { Calendar.current.isDate($0.date, inSameDayAs: today)}) {
+                        
+                        // assign old weight and reps
+                        let oldWeight = exercise.currentWeight
+                        let oldReps = exercise.currentReps
+                        
+                        // update values
+                        existingEntry.weight = weight
+                        existingEntry.reps = reps
+                        
+                        
+                        // generate dynamic note
+                        let newNote = logNote(originalWeight: oldWeight, originalReps: oldReps, weight: weight, reps: reps)
+                        existingEntry.note += existingEntry.note.isEmpty ? newNote : "\n\(newNote)"
+                    } else {
+                        // create new progress entry while updating weight and reps
+                        let newEntry = ProgressEntry(date: Date(), weight: weight, reps: reps)
+                        newEntry.note = "Weight: \(Int(weight)) lbs, Reps: \(reps)"
+                        exercise.progressHistory.append(newEntry)
+                    }
                     
-                    // create new progress entry while updating weight and reps
-                    let newEntry = ProgressEntry(date: Date(), weight: weight, reps: reps)
-                    exercise.progressHistory.append(newEntry)
-                    
-                    // add note to DailyLog
-                    let log = DailyLog.getOrCreateDailyLog(for: Date(), context: context, existingLogs: allLogs)
-                    
-                    log.appendChange(oldWeight: oldWeight, newWeight: exercise.currentWeight, oldReps: oldReps, newReps: exercise.currentReps)
-                    
-                    // save context
                     do {
                         try context.save()
                     } catch {
@@ -107,6 +118,31 @@ struct ExerciseDetailView: View {
             currentWeightString = String(format: "%g", exercise.currentWeight)
             currentRepsString = String(exercise.currentReps)
         }
+    }
+    
+    // generate dynamic note text
+    private func logNote(originalWeight: Double, originalReps: Int, weight: Double, reps: Int) -> String {
+        var changes: [String] = []
+        
+        // check weight
+        if weight != originalWeight {
+            if weight > originalWeight {
+                changes.append("Weight increased from \(Int(originalWeight)) lbs to \(Int(weight))")
+            } else {
+                changes.append("Weight decreased to \(Int(originalWeight)) lbs from \(Int(weight))")
+            }
+        }
+        
+        // check reps
+        if reps != originalReps {
+            if reps > originalReps {
+                changes.append("Reps increased from \(Int(originalReps)) to \(Int(reps))")
+            } else {
+                changes.append("Reps decreased to \(Int(originalReps)) from \(Int(reps))")
+            }
+        }
+        
+        return changes.joined(separator: " ")
     }
 }
  
