@@ -46,8 +46,13 @@ struct ExerciseDetailView: View {
                             currentRepsString = currentRepsString.filter {
                                 "0123456789".contains($0) }
                         }
-                    Text("reps")
-                        .frame(alignment: .leading)
+                    VStack(alignment: .trailing) {
+                        Text("reps")
+                            .frame(alignment: .leading)
+                        Text("Min: \(exercise.minReps) • Max: \(exercise.maxReps)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 // progress entry
