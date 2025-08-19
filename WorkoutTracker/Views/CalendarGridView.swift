@@ -67,7 +67,6 @@ struct CalendarGridView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
-                        print("Print statement. Closed")
                         dismiss()
                     }
                 }
@@ -84,7 +83,6 @@ struct CalendarGridView: View {
             }
             .onAppear {
                 highlightDates = Set(exercise.progressHistory.map { Calendar.current.startOfDay(for: $0.date)})
-                print("Fetched entries: ", highlightDates)
             }
         }
     }
@@ -120,7 +118,6 @@ struct DayCellView: View {
             .fill(Color(.systemBackground))
         )
         .onTapGesture {
-            print("Tapped day: \(day.date)")
             selectedDate = day.date
         }
     }
