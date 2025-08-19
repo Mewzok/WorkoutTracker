@@ -103,7 +103,7 @@ struct DayLogView: View {
 struct PreviewWrapper: View {
     @State private var selectedDate: Date? = Date()
     
-    var body: some View {        
+    var body: some View {
         DayLogView(date: Date())
     }
 }

@@ -24,10 +24,10 @@ struct WorkoutTrackerApp: App {
                         Label("Exercises", systemImage: "figure.walk")
                     }
                 
-                SettingsView()
+                /*SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")
-                    }
+                    } */
             }
         }
         .modelContainer(for: [Workout.self, Exercise.self, ProgressEntry.self, DailyLog.self])

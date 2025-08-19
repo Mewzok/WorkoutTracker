@@ -46,7 +46,7 @@ struct WorkoutDetailView: View {
                 }
             }
             .sheet(isPresented: $showingEditWorkout) {
-                AddWorkoutView(workout: workout)
+                AddWorkoutView(workout: workout, isModal: false)
             }
         }
     }

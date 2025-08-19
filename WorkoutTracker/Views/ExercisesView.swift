@@ -41,7 +41,6 @@ struct ExercisesView: View {
                             NavigationLink(destination: AddExerciseView(exercise: exercise, isModal: false)) {
                                 ExerciseCardView(exercise: exercise)
                             }
-                            //.listRowBackground(exercise.theme.mainColor)
                         }
                         .onDelete { indexSet in
                             if let index = indexSet.first {
