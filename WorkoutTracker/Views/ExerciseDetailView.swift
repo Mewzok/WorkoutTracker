@@ -89,10 +89,10 @@ struct ExerciseDetailView: View {
                 .padding(.vertical, 4)
                 .sheet(isPresented: $showingCalendar) {
                     let logDates = Set(exercise.progressHistory.map { Calendar.current.startOfDay(for: $0.date) })
-                    CalendarGridView()
+                    CalendarGridView(exercise: exercise)
                 }
                 ForEach(exercise.progressHistory.sorted(by: { $0.date > $1.date}), id: \.self) { entry in
-                    NavigationLink(destination: DayLogView(date: entry.date)) {
+                    NavigationLink(destination: DayLogView(exercise: exercise, date: entry.date)) {
                         HStack {
                             Text(entry.date.formatted(date: .abbreviated, time: .omitted))
                                  Spacer()

@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct CalendarGridView: View {
+    @Bindable var exercise: Exercise
+    
     @State private var currentMonthOffset = 0
     @State private var selectedDate: Date? = nil
     @State private var highlightDates: Set<Date> = []
@@ -72,7 +74,7 @@ struct CalendarGridView: View {
                 }
             }
             .sheet(item: $selectedDate) { date in
-                DayLogView(date: date) { didAddLog in
+                DayLogView(exercise: exercise, date: date) { didAddLog in
                     let day = Calendar.current.startOfDay(for: date)
                     if didAddLog {
                         highlightDates.insert(day)
@@ -133,6 +135,6 @@ extension Date: @retroactive Identifiable {
 }
 
 #Preview {
-    CalendarGridView()
+    CalendarGridView(exercise: Exercise(name: "", sets: 0, minReps: 0, maxReps: 0, warmupSets: 0, progressHistory: []))
         .padding()
 }

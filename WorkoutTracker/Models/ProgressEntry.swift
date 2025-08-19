@@ -13,6 +13,7 @@ class ProgressEntry: Identifiable {
     var date: Date
     var weight: Double
     var reps: Int
+    var note: String = ""
     
     init(date: Date, weight: Double, reps: Int) {
         self.date = date

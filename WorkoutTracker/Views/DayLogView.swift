@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct DayLogView: View {
+    @Bindable var exercise: Exercise
     let date: Date
     var didAddLog: ((Bool) -> Void)? = nil
     
@@ -19,6 +20,10 @@ struct DayLogView: View {
     @Query var allLogs: [DailyLog]
     
     var body: some View {
+        var daysEntries: [ProgressEntry] {
+            exercise.progressHistory.filter { Calendar.current.isDate($0.date, inSameDayAs: date)}
+        }
+        
         NavigationStack {
             VStack(alignment: .leading) {
                 Text("Log for \(formatted(date))")
@@ -104,6 +109,6 @@ struct PreviewWrapper: View {
     @State private var selectedDate: Date? = Date()
     
     var body: some View {
-        DayLogView(date: Date())
+        DayLogView(exercise: Exercise(name: "", sets: 0, minReps: 0, maxReps: 0, warmupSets: 0, progressHistory: []), date: Date())
     }
 }
