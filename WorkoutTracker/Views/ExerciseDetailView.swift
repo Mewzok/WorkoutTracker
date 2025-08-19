@@ -78,7 +78,7 @@ struct ExerciseDetailView: View {
                     } else {
                         // create new progress entry while updating weight and reps
                         let newEntry = ProgressEntry(date: Date(), weight: weight, reps: reps)
-                        newEntry.note = "Weight: \(Int(weight)) lbs, Reps: \(reps)"
+                        newEntry.note = "Weight: \(String(format: "%g", weight)) lbs, Reps: \(reps)"
                         exercise.progressHistory.append(newEntry)
                     }
                     
@@ -99,7 +99,6 @@ struct ExerciseDetailView: View {
                 }
                 .padding(.vertical, 4)
                 .sheet(isPresented: $showingCalendar) {
-                    let logDates = Set(exercise.progressHistory.map { Calendar.current.startOfDay(for: $0.date) })
                     CalendarGridView(exercise: exercise)
                 }
                 ForEach(exercise.progressHistory.sorted(by: { $0.date > $1.date}), id: \.self) { entry in
@@ -127,9 +126,9 @@ struct ExerciseDetailView: View {
         // check weight
         if weight != originalWeight {
             if weight > originalWeight {
-                changes.append("Weight increased from \(Int(originalWeight)) lbs to \(Int(weight))")
+                changes.append("Weight increased from \(String(format: "%g", originalWeight)) lbs to \(String(format: "%g", weight))")
             } else {
-                changes.append("Weight decreased to \(Int(originalWeight)) lbs from \(Int(weight))")
+                changes.append("Weight decreased to \(String(format: "%g", weight)) lbs from \(String(format: "%g", originalWeight))")
             }
         }
         
@@ -138,7 +137,7 @@ struct ExerciseDetailView: View {
             if reps > originalReps {
                 changes.append("Reps increased from \(Int(originalReps)) to \(Int(reps))")
             } else {
-                changes.append("Reps decreased to \(Int(originalReps)) from \(Int(reps))")
+                changes.append("Reps decreased to \(Int(reps)) from \(Int(originalReps))")
             }
         }
         
