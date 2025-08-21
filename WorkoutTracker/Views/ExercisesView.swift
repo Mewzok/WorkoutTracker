@@ -82,6 +82,7 @@ struct ExercisesView: View {
         }) { exercise in
             AddExerciseView(exercise: exercise, isModal: true)
                 .environment(\.modelContext, context)
+                .interactiveDismissDisabled(true)
         }
     }
     

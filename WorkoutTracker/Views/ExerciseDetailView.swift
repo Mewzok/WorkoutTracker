@@ -100,6 +100,7 @@ struct ExerciseDetailView: View {
                 .padding(.vertical, 4)
                 .sheet(isPresented: $showingCalendar) {
                     CalendarGridView(exercise: exercise)
+                        .interactiveDismissDisabled(true)
                 }
                 ForEach(exercise.progressHistory.sorted(by: { $0.date > $1.date}), id: \.self) { entry in
                     NavigationLink(destination: DayLogView(exercise: exercise, date: entry.date)) {

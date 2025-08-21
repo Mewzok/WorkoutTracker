@@ -94,6 +94,7 @@ struct WorkoutsView: View {
         }) { workout in
             AddWorkoutView(workout: workout, isModal: true)
                 .environment(\.modelContext, context)
+                .interactiveDismissDisabled(true)
         }
     }
     

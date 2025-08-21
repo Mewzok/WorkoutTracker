@@ -80,6 +80,7 @@ struct CalendarGridView: View {
                         highlightDates.remove(day)
                     }
                 }
+                .interactiveDismissDisabled(true)
             }
             .onAppear {
                 highlightDates = Set(exercise.progressHistory.map { Calendar.current.startOfDay(for: $0.date)})

@@ -47,6 +47,7 @@ struct WorkoutDetailView: View {
             }
             .sheet(isPresented: $showingEditWorkout) {
                 AddWorkoutView(workout: workout, isModal: false)
+                    .interactiveDismissDisabled(true)
             }
         }
     }

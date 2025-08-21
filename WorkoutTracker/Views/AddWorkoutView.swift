@@ -57,6 +57,7 @@ struct AddWorkoutView: View {
                 NavigationStack {
                     ExerciseSelectionView(workout: workout)
                         .navigationTitle("Select Exercises")
+                        .interactiveDismissDisabled(true)
                 }
             }
             .navigationTitle(isModal ? "Add Workout" : "View Workout")
