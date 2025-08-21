@@ -166,7 +166,7 @@ struct AddExerciseView: View {
             let progress = ProgressEntry(date: .now, weight: currentWeightDouble, reps: currentRepsInt)
             
             // create initial creation note
-            progress.note = "Exercise created. Weight: \(Double(currentWeightDouble)) lbs, Reps: \(Int(currentRepsInt))"
+            progress.note = "Exercise created. Weight: \(String(format: "%g", currentWeightDouble)) lbs, Reps: \(Int(currentRepsInt))"
             
             progressHistory = [progress]
         }
