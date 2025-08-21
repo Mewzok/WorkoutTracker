@@ -39,4 +39,31 @@ class Exercise: Identifiable {
         self.warmupSets = warmupSets
         self.progressHistory = progressHistory
     }
+    
+    func updateProgress(newWeight: Double, newReps: Int, on date: Date, context: ModelContext) -> String {
+        let oldWeight = self.currentWeight
+        let oldReps = self.currentReps
+        
+        var changes: [String] = []
+        
+        // check weight
+        if newWeight != oldWeight {
+            if newWeight > oldWeight {
+                changes.append("Weight increased from \(String(format: "%g", oldWeight)) to \(String(format: "%g", newWeight)) lbs. ")
+            } else {
+                changes.append("Weight decreased to \(String(format: "%g", newWeight)) from \(String(format: "%g", oldWeight)) lbs. ")
+            }
+        }
+        
+        // check reps
+        if newReps != oldReps {
+            if newReps > oldReps {
+                changes.append("Reps increased from \(Int(oldReps)) to \(Int(newReps)) reps. ")
+            } else {
+                changes.append("Reps decreased to \(Int(newReps)) from \(Int(oldReps)) reps. ")
+            }
+        }
+        
+        return changes.joined(separator: " ")
+    }
 }

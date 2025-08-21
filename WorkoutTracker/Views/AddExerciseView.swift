@@ -156,19 +156,32 @@ struct AddExerciseView: View {
         let maxRepsInt = Int(maxRepsString.trimmingCharacters(in: .whitespaces)) ?? 0
         let warmupSetsInt = Int(warmupSetsString.trimmingCharacters(in: .whitespaces)) ?? 0
         
-        var progressHistory: [ProgressEntry] = []
-        
-        if currentWeightString != "" || currentRepsString != "" {
+        if !currentWeightString.isEmpty || !currentRepsString.isEmpty {
             let currentWeightDouble = Double(currentWeightString.trimmingCharacters(in: .whitespaces)) ?? 0.0
             let currentRepsInt = Int(currentRepsString.trimmingCharacters(in: .whitespaces)) ?? 0
             
-            // create progress entry
-            let progress = ProgressEntry(date: .now, weight: currentWeightDouble, reps: currentRepsInt)
+            let today = Calendar.current.startOfDay(for: Date())
             
-            // create initial creation note
-            progress.note = "Exercise created. Weight: \(String(format: "%g", currentWeightDouble)) lbs, Reps: \(Int(currentRepsInt))"
-            
-            progressHistory = [progress]
+            if let existingEntry = exercise.progressHistory.first(where: { Calendar.current.isDate($0.date, inSameDayAs: today)}) {
+                
+                // generate note
+                if !isModal {
+                    let note = exercise.updateProgress(newWeight: currentWeightDouble, newReps: currentRepsInt, on: today, context: context)
+                    existingEntry.note += note
+                }
+                
+                // update progress
+                existingEntry.weight = currentWeightDouble
+                existingEntry.reps = currentRepsInt
+            } else {
+                // create new progress entry
+                let progress = ProgressEntry(date: .now, weight: currentWeightDouble, reps: currentRepsInt)
+                
+                // assign note
+                progress.note += isModal ? "Exercise created. Starting at \(String(format: "%g", currentWeightDouble)) lbs, \(currentRepsInt) reps. " : exercise.updateProgress(newWeight: currentWeightDouble, newReps: currentRepsInt, on: today, context: context)
+                
+                exercise.progressHistory.append(progress)
+            }
         }
         
         // modify exercise with new values
@@ -176,10 +189,12 @@ struct AddExerciseView: View {
         exercise.minReps = minRepsInt
         exercise.maxReps = maxRepsInt
         exercise.warmupSets = warmupSetsInt
-        exercise.progressHistory = progressHistory
         
         // save to model context
-        context.insert(exercise)
+        if isModal {
+            context.insert(exercise)
+        }
+            
         try? context.save()
     }
 }

@@ -68,22 +68,17 @@ struct ExerciseDetailView: View {
                     let today = Calendar.current.startOfDay(for: Date())
                     if let existingEntry = exercise.progressHistory.first(where: { Calendar.current.isDate($0.date, inSameDayAs: today)}) {
                         
-                        // assign old weight and reps
-                        let oldWeight = exercise.currentWeight
-                        let oldReps = exercise.currentReps
+                        // generate dynamic note
+                        let newNote = exercise.updateProgress(newWeight: weight, newReps: reps, on: today, context: context)
+                        existingEntry.note += newNote
                         
                         // update values
                         existingEntry.weight = weight
                         existingEntry.reps = reps
-                        
-                        
-                        // generate dynamic note
-                        let newNote = logNote(originalWeight: oldWeight, originalReps: oldReps, weight: weight, reps: reps)
-                        existingEntry.note += existingEntry.note.isEmpty ? newNote : "\n\(newNote)"
                     } else {
                         // create new progress entry while updating weight and reps
                         let newEntry = ProgressEntry(date: Date(), weight: weight, reps: reps)
-                        newEntry.note = "Weight: \(String(format: "%g", weight)) lbs, Reps: \(reps)"
+                        newEntry.note = "Exercise created. Starting at \(String(format: "%g", weight)) lbs, \(String(reps)) reps. "
                         exercise.progressHistory.append(newEntry)
                     }
                     
@@ -123,31 +118,7 @@ struct ExerciseDetailView: View {
             currentRepsString = String(exercise.currentReps)
         }
     }
-    
-    // generate dynamic note text
-    private func logNote(originalWeight: Double, originalReps: Int, weight: Double, reps: Int) -> String {
-        var changes: [String] = []
-        
-        // check weight
-        if weight != originalWeight {
-            if weight > originalWeight {
-                changes.append("Weight increased from \(String(format: "%g", originalWeight)) lbs to \(String(format: "%g", weight))")
-            } else {
-                changes.append("Weight decreased to \(String(format: "%g", weight)) lbs from \(String(format: "%g", originalWeight))")
-            }
-        }
-        
-        // check reps
-        if reps != originalReps {
-            if reps > originalReps {
-                changes.append("Reps increased from \(Int(originalReps)) to \(Int(reps))")
-            } else {
-                changes.append("Reps decreased to \(Int(reps)) from \(Int(originalReps))")
-            }
-        }
-        
-        return changes.joined(separator: " ")
-    }
+
 }
  
 #Preview {
