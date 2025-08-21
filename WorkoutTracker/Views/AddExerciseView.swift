@@ -19,6 +19,7 @@ struct AddExerciseView: View {
     @State private var currentRepsString: String = ""
     
     @State private var showAlert = false
+    @State private var showingCalendar = false
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
@@ -100,6 +101,31 @@ struct AddExerciseView: View {
                             }
                         Text("reps")
                             .frame(alignment: .leading)
+                    }
+                }
+                
+                // progress history section
+                // only show if modifying existing exercise
+                if isModal {
+                    Section(header: Text("Progress History")) {
+                        Button() {
+                            showingCalendar = true
+                        } label: {
+                            Label("Show Calendar", systemImage: "calendar")
+                        }
+                        .padding(.vertical, 4)
+                        .sheet(isPresented: $showingCalendar) {
+                            CalendarGridView(exercise: exercise)
+                                .interactiveDismissDisabled(true)
+                        }
+                        ForEach(exercise.progressHistory.sorted(by: { $0.date > $1.date}), id: \.self) { entry in
+                            HStack {
+                                Text(entry.date.formatted(date: .abbreviated, time: .omitted))
+                                Spacer()
+                                Text("\(entry.weight, specifier: "%g") lbs x \(entry.reps) reps")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
                 }
             }
